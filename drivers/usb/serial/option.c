@@ -2068,6 +2068,20 @@ static int option_probe(struct usb_serial *serial,
 	if (device_flags & NUMEP2 && iface_desc->bNumEndpoints != 2)
 		return -ENODEV;
 
+
+#if 1 // Added by Quectel
+    if (serial->dev->descriptor.idVendor == cpu_to_le16(0x2C7C)) {
+        __u16 idProduct = le16_to_cpu(serial->dev->descriptor.idProduct);
+
+        // Quectel EC200T's interface 0 can be used as USB Network device (ECM, RNDIS)
+        if (serial->interface->cur_altsetting->desc.bInterfaceClass != 0xFF)
+            return -ENODEV;
+    }
+#endif
+
+
+
+
 	/* Store the device flags so we can use them during attach. */
 	usb_set_serial_data(serial, (void *)device_flags);
 
